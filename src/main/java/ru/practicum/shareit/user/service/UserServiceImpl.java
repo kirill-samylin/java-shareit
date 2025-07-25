@@ -6,28 +6,23 @@ import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.InMemoryUserRepository;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final InMemoryUserRepository userRepository;
-    private final AtomicLong idGenerator = new AtomicLong(1);
+    private final UserRepository userRepository;
 
     @Override
     public UserDto createUser(UserDto userDto) {
-
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new IllegalArgumentException("Email уже используется");
         }
-
         User newUser = UserMapper.toEntity(userDto);
-        newUser.setId(idGenerator.getAndIncrement());
         userRepository.save(newUser);
         return UserMapper.toDto(newUser);
     }
@@ -35,7 +30,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long id) {
         return UserMapper.toDto(userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found")));
+                .orElseThrow(() -> new UserNotFoundException(id)));
     }
 
     @Override
@@ -48,7 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(Long id, UserDto updatedUserDto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(id));
         if (updatedUserDto.getName() != null) {
             user.setName(updatedUserDto.getName());
         }
@@ -67,12 +62,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long id) {
+        userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
         userRepository.delete(id);
-    }
-
-    public void validateUserExists(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException(userId);
-        }
     }
 }

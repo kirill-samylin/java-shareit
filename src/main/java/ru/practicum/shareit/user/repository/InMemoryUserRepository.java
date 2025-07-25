@@ -6,10 +6,14 @@ import ru.practicum.shareit.user.model.User;
 import java.util.*;
 
 @Repository
-public class InMemoryUserRepository {
+public class InMemoryUserRepository implements UserRepository {
     private final Map<Long, User> users = new HashMap<>();
+    private long nextId = 1;
 
     public User save(User user) {
+        if (user.getId() == null) {
+            user.setId(nextId++);
+        }
         users.put(user.getId(), user);
         return user;
     }
