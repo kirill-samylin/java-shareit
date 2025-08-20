@@ -122,16 +122,14 @@ public class BookingServiceImpl implements BookingService {
     // Фильтрация по state
     private List<Booking> filterBookings(List<Booking> bookings, String state) {
         LocalDateTime now = LocalDateTime.now();
-        return bookings.stream().filter(booking -> {
-            switch (state.toUpperCase()) {
-                case "ALL": return true;
-                case "CURRENT": return now.isAfter(booking.getStart()) && now.isBefore(booking.getEnd());
-                case "PAST": return now.isAfter(booking.getEnd());
-                case "FUTURE": return now.isBefore(booking.getStart());
-                case "WAITING": return booking.getStatus() == BookingStatus.WAITING;
-                case "REJECTED": return booking.getStatus() == BookingStatus.REJECTED;
-                default: throw new IllegalArgumentException("Unknown state: " + state);
-            }
+        return bookings.stream().filter(booking -> switch (state.toUpperCase()) {
+            case "ALL" -> true;
+            case "CURRENT" -> now.isAfter(booking.getStart()) && now.isBefore(booking.getEnd());
+            case "PAST" -> now.isAfter(booking.getEnd());
+            case "FUTURE" -> now.isBefore(booking.getStart());
+            case "WAITING" -> booking.getStatus() == BookingStatus.WAITING;
+            case "REJECTED" -> booking.getStatus() == BookingStatus.REJECTED;
+            default -> throw new IllegalArgumentException("Unknown state: " + state);
         }).collect(Collectors.toList());
     }
 
