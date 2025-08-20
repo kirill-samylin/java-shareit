@@ -16,4 +16,13 @@ public class ItemRequestMapper {
         dto.setRequestor(UserMapper.toDto(request.getRequestor()));
         return dto;
     }
+
+    public static ItemRequest toEntity(ItemRequestDto dto) {
+        if (dto == null) return null;
+        ItemRequest request = new ItemRequest();
+        request.setId(dto.getId());
+        request.setDescription(dto.getDescription());
+        request.setCreated(dto.getCreated()); // можно оставить null — будет проставлено в сервисе
+        return request;
+    }
 }

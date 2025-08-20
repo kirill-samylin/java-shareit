@@ -1,8 +1,15 @@
 package ru.practicum.shareit.item.service;
 
+import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.mapper.CommentMapper;
+import ru.practicum.shareit.comment.model.Comment;
+import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -12,6 +19,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -23,6 +31,8 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final BookingRepository bookingRepository;
 
     @Override
     public ItemDto addItem(Long ownerId, ItemDto itemDto) {
@@ -60,7 +70,15 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException(itemId));
-        return ItemMapper.toDto(item);
+
+        ItemDto itemDto = ItemMapper.toDto(item);
+
+        List<Comment> comments = commentRepository.findByItemId(item.getId());
+        itemDto.setComments(
+                comments.stream().map(CommentMapper::toDto).collect(Collectors.toList())
+        );
+
+        return itemDto;
     }
 
     @Override
@@ -87,5 +105,32 @@ public class ItemServiceImpl implements ItemService {
                         || item.getDescription().toLowerCase().contains(query))
                 .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public CommentDto addComment(Long userId, Long itemId, String text) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new ItemNotFoundException(itemId));
+
+        // Проверка: брал ли пользователь вещь как "booker" и аренда уже завершена
+        boolean hasBooking = bookingRepository.existsByItem_IdAndBooker_IdAndEndBefore(
+                itemId, userId, LocalDateTime.now()
+        );
+
+        if (!hasBooking) {
+            throw new ValidationException("Пользователь не может комментировать вещь, которую не арендовал");
+        }
+
+        Comment comment = new Comment();
+        comment.setAuthor(user);
+        comment.setItem(item);
+        comment.setText(text);
+        comment.setCreated(LocalDateTime.now());
+
+        return CommentMapper.toDto(commentRepository.save(comment));
     }
 }
