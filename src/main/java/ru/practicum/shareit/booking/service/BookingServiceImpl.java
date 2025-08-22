@@ -8,10 +8,7 @@ import ru.practicum.shareit.booking.dto.CreateBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.exception.AccessDeniedException;
-import ru.practicum.shareit.exception.BookingNotFoundException;
-import ru.practicum.shareit.exception.ItemNotFoundException;
-import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -54,6 +51,14 @@ public class BookingServiceImpl implements BookingService {
 
         if (!item.getAvailable()) {
             throw new IllegalStateException("Предмет недоступен для бронирования");
+        }
+
+        // Блокируем пересечение с уже подтверждёнными бронями
+        boolean overlaps = bookingRepository.existsByItem_IdAndStatusAndStartBeforeAndEndAfter(
+            item.getId(), BookingStatus.APPROVED, bookingDto.getEnd(), bookingDto.getStart()
+        );
+        if (overlaps) {
+            throw new ConflictException("Период пересекается с уже подтверждённым бронированием");
         }
 
         Booking booking = BookingMapper.toEntity(bookingDto);
