@@ -23,7 +23,4 @@ public class CreateBookingDto {
     @NotNull(message = "itemId не может быть null")
     private Long itemId;
 
-    private Long bookerId;
-
-    private BookingStatus status;
 }

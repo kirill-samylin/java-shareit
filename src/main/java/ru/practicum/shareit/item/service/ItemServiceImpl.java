@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.CreateCommentDto;
 import ru.practicum.shareit.comment.mapper.CommentMapper;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
@@ -22,6 +23,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -109,12 +111,17 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public CommentDto addComment(Long userId, Long itemId, String text) {
+    public CommentDto addComment(Long userId, Long itemId, CreateCommentDto body) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException(itemId));
+
+        // Запрет для владельца вещи
+        if (Objects.equals(item.getOwner().getId(), userId)) {
+            throw new ValidationException("Владелец не может комментировать свою вещь");
+        }
 
         // Проверка: брал ли пользователь вещь как "booker" и аренда уже завершена
         boolean hasBooking = bookingRepository.existsByItem_IdAndBooker_IdAndEndBefore(
@@ -125,11 +132,9 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("Пользователь не может комментировать вещь, которую не арендовал");
         }
 
-        Comment comment = new Comment();
+        Comment comment = CommentMapper.toEntity(body);
         comment.setAuthor(user);
         comment.setItem(item);
-        comment.setText(text);
-        comment.setCreated(LocalDateTime.now());
 
         return CommentMapper.toDto(commentRepository.save(comment));
     }

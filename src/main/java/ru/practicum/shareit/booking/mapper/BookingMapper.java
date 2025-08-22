@@ -4,9 +4,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreateBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.model.User;
 
 public class BookingMapper {
 
@@ -30,7 +28,7 @@ public class BookingMapper {
     }
 
     // Преобразование BookingDto → Booking
-    public static Booking toEntity(CreateBookingDto dto, Item item, User booker) {
+    public static Booking toEntity(CreateBookingDto dto) {
         if (dto == null) {
             return null;
         }
@@ -39,10 +37,6 @@ public class BookingMapper {
         booking.setId(dto.getId());
         booking.setStart(dto.getStart());
         booking.setEnd(dto.getEnd());
-
-        booking.setItem(item);
-        booking.setBooker(booker);
-        booking.setStatus(dto.getStatus());
 
         return booking;
     }
