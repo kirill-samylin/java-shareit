@@ -50,13 +50,13 @@ class BookingControllerTest {
                 .thenReturn(bookingDto);
 
         mvc.perform(post("/bookings")
-                .header("X-Sharer-User-Id", 2L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(createBookingDto))
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.id").value(1))
-            .andExpect(jsonPath("$.status").value("WAITING"));
+                        .header("X-Sharer-User-Id", 2L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(createBookingDto))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.status").value("WAITING"));
 
         verify(bookingService).createBooking(eq(2L), any(CreateBookingDto.class));
     }
@@ -70,12 +70,12 @@ class BookingControllerTest {
                 .thenReturn(approved);
 
         mvc.perform(patch("/bookings/{bookingId}", 1L)
-                .header("X-Sharer-User-Id", 2L)
-                .param("approved", "true")
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(1))
-            .andExpect(jsonPath("$.status").value("APPROVED"));
+                        .header("X-Sharer-User-Id", 2L)
+                        .param("approved", "true")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.status").value("APPROVED"));
 
         verify(bookingService).approveBooking(1L, 2L, true);
     }
@@ -96,31 +96,32 @@ class BookingControllerTest {
     }
 
     @Test
-    void getBookingsByBookerTest() throws Exception {when(bookingService.getBookingsByBooker(eq(2L), eq("ALL")))
-            .thenReturn(List.of(bookingDto));
+    void getBookingsByBookerTest() throws Exception {
+        when(bookingService.getBookingsByBooker(eq(2L), eq("ALL")))
+                .thenReturn(List.of(bookingDto));
         mvc.perform(get("/bookings")
-                .header("X-Sharer-User-Id", 2L)
-                .param("state", "ALL")
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(1)))
-            .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].status").value("WAITING"));
+                        .header("X-Sharer-User-Id", 2L)
+                        .param("state", "ALL")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(1)))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].status").value("WAITING"));
         verify(bookingService).getBookingsByBooker(2L, "ALL");
     }
 
     @Test
     void getBookingsByOwnerTest() throws Exception {
         when(bookingService.getBookingsByOwner(eq(2L), eq("ALL")))
-            .thenReturn(List.of(bookingDto));
+                .thenReturn(List.of(bookingDto));
         mvc.perform(get("/bookings/owner")
-                .header("X-Sharer-User-Id", 2L)
-                .param("state", "ALL")
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(1)))
-            .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].status").value("WAITING"));
+                        .header("X-Sharer-User-Id", 2L)
+                        .param("state", "ALL")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(1)))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].status").value("WAITING"));
         verify(bookingService).getBookingsByOwner(2L, "ALL");
     }
 
