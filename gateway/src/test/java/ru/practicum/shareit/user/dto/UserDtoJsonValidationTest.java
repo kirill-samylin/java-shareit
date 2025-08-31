@@ -32,30 +32,17 @@ class UserDtoJsonValidationTest {
 
     @Test
     void validJson_shouldPassValidation() throws Exception {
-        // given
-        String body = """
-                {
-                  "id": 1,
-                  "name": "Иван",
-                  "email": "ivan@example.com"
-                }
-                """;
+        String body = "{\"id\":1,\"name\":\"Иван\",\"email\":\"ivan@example.com\"}";
 
-        // when
         UserDto dto = json.parseObject(body);
         Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
 
-        // then
         assertTrue(violations.isEmpty(), "Должно не быть ошибок валидации");
     }
 
     @Test
     void missingName_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "email": "ivan@example.com"
-                }
-                """;
+        String body = "{\"email\":\"ivan@example.com\"}";
 
         UserDto dto = json.parseObject(body);
         Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
@@ -65,12 +52,7 @@ class UserDtoJsonValidationTest {
 
     @Test
     void blankName_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "name": "   ",
-                  "email": "ivan@example.com"
-                }
-                """;
+        String body = "{\"name\":\"   \",\"email\":\"ivan@example.com\"}";
 
         UserDto dto = json.parseObject(body);
         Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
@@ -80,11 +62,7 @@ class UserDtoJsonValidationTest {
 
     @Test
     void missingEmail_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "name": "Иван"
-                }
-                """;
+        String body = "{\"name\":\"Иван\"}";
 
         UserDto dto = json.parseObject(body);
         Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
@@ -94,12 +72,7 @@ class UserDtoJsonValidationTest {
 
     @Test
     void blankEmail_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "name": "Иван",
-                  "email": "   "
-                }
-                """;
+        String body = "{\"name\":\"Иван\",\"email\":\"   \"}";
 
         UserDto dto = json.parseObject(body);
         Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
@@ -109,13 +82,11 @@ class UserDtoJsonValidationTest {
 
     @Test
     void badEmailFormat_shouldFailEmail() throws Exception {
-        String body = """
-                {
-                  "name": "Иван",
-                  "email": "bad-email"
-                }
-                """;UserDto dto = json.parseObject(body);
+        String body = "{\"name\":\"Иван\",\"email\":\"bad-email\"}";
+
+        UserDto dto = json.parseObject(body);
         Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
+
         assertHasViolation(violations, "email", "Некорректный формат email");
     }
 

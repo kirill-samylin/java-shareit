@@ -32,11 +32,7 @@ class CreateCommentDtoJsonValidationTest {
 
     @Test
     void validJson_shouldPassValidation() throws Exception {
-        String body = """
-                {
-                  "text": "Отличная вещь!"
-                }
-                """;
+        String body = "{\"text\":\"Отличная вещь!\"}";
 
         CreateCommentDto dto = json.parseObject(body);
         Set<ConstraintViolation<CreateCommentDto>> violations = validator.validate(dto);
@@ -46,10 +42,7 @@ class CreateCommentDtoJsonValidationTest {
 
     @Test
     void missingText_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                }
-                """;
+        String body = "{}";
 
         CreateCommentDto dto = json.parseObject(body);
         Set<ConstraintViolation<CreateCommentDto>> violations = validator.validate(dto);
@@ -59,11 +52,7 @@ class CreateCommentDtoJsonValidationTest {
 
     @Test
     void blankText_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "text": "   "
-                }
-                """;
+        String body = "{\"text\":\"   \"}";
 
         CreateCommentDto dto = json.parseObject(body);
         Set<ConstraintViolation<CreateCommentDto>> violations = validator.validate(dto);
@@ -73,11 +62,7 @@ class CreateCommentDtoJsonValidationTest {
 
     @Test
     void emptyText_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "text": ""
-                }
-                """;
+        String body = "{\"text\":\"\"}";
 
         CreateCommentDto dto = json.parseObject(body);
         Set<ConstraintViolation<CreateCommentDto>> violations = validator.validate(dto);

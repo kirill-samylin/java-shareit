@@ -32,14 +32,7 @@ class ItemDtoJsonValidationTest {
 
     @Test
     void validJson_shouldPassValidation() throws Exception {
-        String body = """
-                {
-                  "id": 7,
-                  "name": "Перфоратор",
-                  "description": "Мощный перфоратор",
-                  "available": true
-                }
-                """;
+        String body = "{\"id\":7,\"name\":\"Перфоратор\",\"description\":\"Мощный перфоратор\",\"available\":true}";
 
         ItemDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
@@ -49,20 +42,10 @@ class ItemDtoJsonValidationTest {
 
     @Test
     void validFullJson_shouldPassValidation() throws Exception {
-        String body = """
-                {
-                  "id": 8,
-                  "name": "Шуруповерт",
-                  "description": "С двумя батареями",
-                  "available": false,
-                  "lastBooking": "2025-08-28T21:12:35",
-                  "nextBooking": "2025-08-29T09:00:00",
-                  "request": { "id": 123 },
-                  "comments": [
-                    { "id": 1, "text": "Норм" }
-                  ]
-                }
-                """;
+        String body = "{\"id\":8,\"name\":\"Шуруповерт\",\"description\":\"С двумя батареями\",\"available\":false,"
+                + "\"lastBooking\":\"2025-08-28T21:12:35\",\"nextBooking\":\"2025-08-29T09:00:00\","
+                + "\"request\":{\"id\":123},"
+                + "\"comments\":[{\"id\":1,\"text\":\"Норм\"}]}";
 
         ItemDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
@@ -72,12 +55,7 @@ class ItemDtoJsonValidationTest {
 
     @Test
     void missingName_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "description": "Описание",
-                  "available": true
-                }
-                """;
+        String body = "{\"description\":\"Описание\",\"available\":true}";
 
         ItemDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
@@ -87,13 +65,7 @@ class ItemDtoJsonValidationTest {
 
     @Test
     void blankName_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "name": "   ",
-                  "description": "Описание",
-                  "available": true
-                }
-                """;
+        String body = "{\"name\":\"   \",\"description\":\"Описание\",\"available\":true}";
 
         ItemDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
@@ -103,12 +75,7 @@ class ItemDtoJsonValidationTest {
 
     @Test
     void missingDescription_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "name": "Перфоратор",
-                  "available": true
-                }
-                """;
+        String body = "{\"name\":\"Перфоратор\",\"available\":true}";
 
         ItemDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
@@ -118,26 +85,17 @@ class ItemDtoJsonValidationTest {
 
     @Test
     void blankDescription_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "name": "Перфоратор",
-                  "description": "   ",
-                  "available": true
-                }
-                """;
+        String body = "{\"name\":\"Перфоратор\",\"description\":\"   \",\"available\":true}";
+
         ItemDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
+
         assertHasViolation(violations, "description", "Описание не должно быть пустым");
     }
 
     @Test
     void missingAvailable_shouldFailNotNull() throws Exception {
-        String body = """
-                {
-                  "name": "Перфоратор",
-                  "description": "Описание"
-                }
-                """;
+        String body = "{\"name\":\"Перфоратор\",\"description\":\"Описание\"}";
         ItemDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
         assertHasViolation(violations, "available", "Поле 'available' обязательно для заполнения");
@@ -145,13 +103,7 @@ class ItemDtoJsonValidationTest {
 
     @Test
     void nullAvailable_shouldFailNotNull() throws Exception {
-        String body = """
-                {
-                  "name": "Перфоратор",
-                  "description": "Описание",
-                  "available": null
-                }
-                """;
+        String body = "{\"name\":\"Перфоратор\",\"description\":\"Описание\",\"available\":null}";
         ItemDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemDto>> violations = validator.validate(dto);
         assertHasViolation(violations, "available", "Поле 'available' обязательно для заполнения");

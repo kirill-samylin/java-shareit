@@ -18,7 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @JsonTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class ItemRequestCreateDtoJsonValidationTest {
+class ItemRequestCreateDtoJsonValidationTest {
+
     private final JacksonTester<ItemRequestCreateDto> json;
 
     private static Validator validator;
@@ -31,12 +32,7 @@ public class ItemRequestCreateDtoJsonValidationTest {
 
     @Test
     void validJson_shouldPassValidation() throws Exception {
-        String body = """
-                {
-                  "id": 10,
-                  "description": "Нужен молоток"
-                }
-                """;
+        String body = "{\"id\":10,\"description\":\"Нужен молоток\"}";
 
         ItemRequestCreateDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemRequestCreateDto>> violations = validator.validate(dto);
@@ -46,11 +42,7 @@ public class ItemRequestCreateDtoJsonValidationTest {
 
     @Test
     void missingDescription_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "id": 10
-                }
-                """;
+        String body = "{\"id\":10}";
 
         ItemRequestCreateDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemRequestCreateDto>> violations = validator.validate(dto);
@@ -60,11 +52,7 @@ public class ItemRequestCreateDtoJsonValidationTest {
 
     @Test
     void blankDescription_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "description": "   "
-                }
-                """;
+        String body = "{\"description\":\"   \"}";
 
         ItemRequestCreateDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemRequestCreateDto>> violations = validator.validate(dto);
@@ -74,11 +62,7 @@ public class ItemRequestCreateDtoJsonValidationTest {
 
     @Test
     void emptyDescription_shouldFailNotBlank() throws Exception {
-        String body = """
-                {
-                  "description": ""
-                }
-                """;
+        String body = "{\"description\":\"\"}";
 
         ItemRequestCreateDto dto = json.parseObject(body);
         Set<ConstraintViolation<ItemRequestCreateDto>> violations = validator.validate(dto);
