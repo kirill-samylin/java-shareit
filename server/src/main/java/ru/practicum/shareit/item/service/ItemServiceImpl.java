@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -132,7 +131,7 @@ public class ItemServiceImpl implements ItemService {
 
         // Запрет для владельца вещи
         if (Objects.equals(item.getOwner().getId(), userId)) {
-            throw new ValidationException("Владелец не может комментировать свою вещь");
+            throw new IllegalArgumentException("Владелец не может комментировать свою вещь");
         }
 
         // Проверка: брал ли пользователь вещь как "booker" и аренда уже завершена
@@ -141,7 +140,7 @@ public class ItemServiceImpl implements ItemService {
         );
 
         if (!hasBooking) {
-            throw new ValidationException("Пользователь не может комментировать вещь, которую не арендовал");
+            throw new IllegalArgumentException("Пользователь не может комментировать вещь, которую не арендовал");
         }
 
         Comment comment = CommentMapper.toEntity(body);

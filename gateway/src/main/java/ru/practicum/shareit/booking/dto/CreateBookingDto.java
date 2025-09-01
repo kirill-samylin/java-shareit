@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 @Data
 public class CreateBookingDto {
 
-    private Long id;
-
     @NotNull(message = "Дата начала бронирования не может быть пустой")
     @Future(message = "Дата начала бронирования должна быть в будущем")
     private LocalDateTime start;

@@ -7,8 +7,6 @@ import lombok.Data;
 @Data
 public class CreateItemDto {
 
-    private Long id;
-
     @NotBlank(message = "Название не должно быть пустым")
     private String name;
 
@@ -17,7 +15,5 @@ public class CreateItemDto {
 
     @NotNull(message = "Поле 'available' обязательно для заполнения")
     private Boolean available;
-
-    private Long requestId;
 
 }

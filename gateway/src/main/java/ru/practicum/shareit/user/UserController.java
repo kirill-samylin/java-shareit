@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable @Positive long id) {
+    public ResponseEntity<Object> getUserById(@PathVariable @Positive Long id) {
         log.info("Get user by id={}", id);
         return userClient.getUserById(id);
     }
@@ -38,14 +38,14 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable @Positive long id,
+    public ResponseEntity<Object> updateUser(@PathVariable @Positive Long id,
                                              @RequestBody UserDto dto) {
         log.info("Update user id={}, patch={}", id, dto);
         return userClient.updateUser(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable @Positive long id) {
+    public ResponseEntity<Object> deleteUser(@PathVariable @Positive Long id) {
         log.info("Delete user id={}", id);
         return userClient.deleteUser(id);
     }

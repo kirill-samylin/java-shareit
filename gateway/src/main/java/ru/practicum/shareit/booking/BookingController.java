@@ -24,15 +24,15 @@ public class BookingController {
 
     // Создать бронирование
     @PostMapping
-    public ResponseEntity<Object> bookItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> createBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
                                            @RequestBody @Valid CreateBookingDto requestDto) {
         log.info("Creating booking {}, userId={}", requestDto, userId);
-        return bookingClient.bookItem(userId, requestDto);
+        return bookingClient.createBooking(userId, requestDto);
     }
 
     // Подтверждение / отклонение брони владельцем
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<Object> approveBooking(@RequestHeader("X-Sharer-User-Id") long ownerId,
+    public ResponseEntity<Object> approveBooking(@RequestHeader("X-Sharer-User-Id") Long ownerId,
                                                  @PathVariable Long bookingId,
                                                  @RequestParam boolean approved) {
         log.info("Approve booking {}, ownerId={}, approved={}", bookingId, ownerId, approved);
@@ -41,7 +41,7 @@ public class BookingController {
 
     // Получить бронирование по id (доступно владельцу вещи или автору)
     @GetMapping("/{bookingId}")
-    public ResponseEntity<Object> getBooking(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> getBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
                                              @PathVariable Long bookingId) {
         log.info("Get booking {}, userId={}", bookingId, userId);
         return bookingClient.getBooking(userId, bookingId);
@@ -49,7 +49,7 @@ public class BookingController {
 
     // Список бронирований текущего пользователя (booker)
     @GetMapping
-    public ResponseEntity<Object> getBookings(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> getBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
                                               @RequestParam(name = "state", defaultValue = "all") String stateParam,
                                               @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                               @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
@@ -61,7 +61,7 @@ public class BookingController {
 
     // Список бронирований для владельца вещей
     @GetMapping("/owner")
-    public ResponseEntity<Object> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") long ownerId,
+    public ResponseEntity<Object> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long ownerId,
                                                    @RequestParam(name = "state", defaultValue = "all") String stateParam,
                                                    @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                    @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
@@ -73,7 +73,7 @@ public class BookingController {
 
     // Удаление бронирования
     @DeleteMapping("/{bookingId}")
-    public ResponseEntity<Object> deleteBooking(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> deleteBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                 @PathVariable Long bookingId) {
         log.info("Delete booking {}, by userId={}", bookingId, userId);
         return bookingClient.deleteBooking(userId, bookingId);

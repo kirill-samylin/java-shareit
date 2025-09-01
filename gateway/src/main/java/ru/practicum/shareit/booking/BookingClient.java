@@ -29,7 +29,7 @@ public class BookingClient extends BaseClient {
     }
 
     // Booker list
-    public ResponseEntity<Object> getBookings(long userId, BookingState state, Integer from, Integer size) {
+    public ResponseEntity<Object> getBookings(Long userId, BookingState state, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
             "state", state.name(),
             "from", from,
@@ -39,7 +39,7 @@ public class BookingClient extends BaseClient {
     }
 
     // Owner list
-    public ResponseEntity<Object> getOwnerBookings(long ownerId, BookingState state, Integer from, Integer size) {
+    public ResponseEntity<Object> getOwnerBookings(Long ownerId, BookingState state, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
             "state", state.name(),
             "from", from,
@@ -48,22 +48,22 @@ public class BookingClient extends BaseClient {
         return get("/owner?state={state}&from={from}&size={size}", ownerId, parameters);
     }
 
-    public ResponseEntity<Object> bookItem(long userId, CreateBookingDto requestDto) {
+    public ResponseEntity<Object> createBooking(Long userId, CreateBookingDto requestDto) {
         return post("", userId, requestDto);
     }
 
-    public ResponseEntity<Object> getBooking(long userId, Long bookingId) {
+    public ResponseEntity<Object> getBooking(Long userId, Long bookingId) {
         return get("/" + bookingId, userId);
     }
 
     // Approve/Reject
-    public ResponseEntity<Object> approveBooking(long ownerId, long bookingId, boolean approved) {
+    public ResponseEntity<Object> approveBooking(Long ownerId, Long bookingId, boolean approved) {
         // тело не требуется; если в BaseClient patch требует body — передаем null
         return patch("/" + bookingId + "?approved=" + approved, ownerId, null);
     }
 
     // Delete
-    public ResponseEntity<Object> deleteBooking(long userId, long bookingId) {
+    public ResponseEntity<Object> deleteBooking(Long userId, Long bookingId) {
         return delete("/" + bookingId, userId);
     }
 }
