@@ -16,4 +16,6 @@ public class CreateItemDto {
     @NotNull(message = "Поле 'available' обязательно для заполнения")
     private Boolean available;
 
+    private Long requestId;
+
 }
